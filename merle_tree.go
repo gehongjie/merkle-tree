@@ -139,9 +139,13 @@ func prove(tree *MerkleTree, nF []byte) ([][]byte, error) {
 
 func main() {
 	//设定输入的内容
-	example := [][]byte{{1, 2, 3}, {4}, {1, 23, 4}, {2, 13, 4}}
+	example := [][]byte{{1, 2, 3}, {4}, {1, 23, 4}, {2, 13, 4}, {9}}
 	var route [][]byte
 	tree := getMerkleTree(example)
+	fmt.Println(tree.Root.Left.Hash)
+	fmt.Println(tree.Root.Left.Right.Hash)
+	fmt.Println(tree.Root.Left.Left.Hash)
+	fmt.Println(tree.Root.Right.Hash)
 	//var aa = MerkleNode{}
 	//aa = *tree.Root
 	//println(aa.Hash)
@@ -161,5 +165,23 @@ func main() {
 		println(err)
 	}
 	fmt.Println("证明路径：", route)
+	//证明
+	var guodu []byte
+	for i := 0; i < len(route)-2; i++ {
+		println(i)
+		if i == 0 {
+			fmt.Println("第1轮：\n", route[i], route[i+1])
+			guodu16 := md5.Sum(append(route[i], route[i+1]...))
+			guodu = guodu16[:]
+			fmt.Println("hash结果:\n", guodu)
+		} else {
+			fmt.Printf("新 %d 轮:%v,%v \n", i, guodu, route[i+1])
+			guodu16 := md5.Sum(append(guodu, route[i+1]...))
+			guodu = guodu16[:]
+			fmt.Println("结果:\n", guodu)
+
+		}
+
+	}
 
 }
